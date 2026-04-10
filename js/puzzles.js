@@ -1,42 +1,58 @@
 // Puzzle configuration — edit this file to add/remove/modify puzzles.
-// answerHash = SHA-256 of the lowercase, trimmed correct answer.
+// answerHash = SHA-256 of the lowercase, trimmed, diacritics-stripped correct answer.
 // Generate a hash: echo -n 'youranswer' | shasum -a 256
 
 const PUZZLES = [
   {
     id: "sifra-01",
-    title: "Šifra 1: Zapomenutá zpráva",
-    description: "Na staré mapě je ukrytá zpráva. Rozluštěte souřadnice a najděte heslo.",
-    files: [
-      { name: "Mapa.pdf", path: "assets/files/sifra-01-mapa.pdf" }
-    ],
-    answerHash: "4bc2ef0648cdf275032c83bb1e87dd554d47f4be293670042212c8a01cc2ccbe", // heslo1
-    hint: "Podívejte se na první písmena..."
+    title: "Fotky",
+    description: "",
+    files: [],
+    answerHash: "8faac9a708e71c90958128e54f74e444dae8f01a45728e4a0f85e0c46826025c"
   },
   {
     id: "sifra-02",
-    title: "Šifra 2: Tajná tabulka",
-    description: "Tabulka skrývá vzorec. Najděte správnou kombinaci.",
-    files: [
-      { name: "Tabulka.pdf", path: "assets/files/sifra-02-tabulka.pdf" }
-    ],
-    answerHash: "274efeaa827a33d7e35be9a82cd6150b7caf98f379a4252aa1afce45664dcbe1", // heslo2
-    hint: null
+    title: "Něco málo o nás",
+    description: "",
+    files: [],
+    answerHash: "e7393c0cf8ac5deacecb3d459ef451514abc0616fa8fa17a0f48934bec48ce88"
   },
   {
     id: "sifra-03",
-    title: "Šifra 3: Skrytý obraz",
-    description: "V obrázku se skrývá poslední klíč. Co vidíte, když se díváte pozorně?",
-    files: [
-      { name: "Obrazek.png", path: "assets/files/sifra-03-obrazek.png" }
-    ],
-    answerHash: "05af533c6614544a704c4cf51a45be5c10ff19bd10b7aa1dfe47efc0fd059ede", // heslo3
-    hint: null
+    title: "Přibližně",
+    description: "",
+    files: [],
+    answerHash: "b9ef95bdbedb1517540e01589aac224171d88a25aa65df7e55331b8332132242"
+  },
+  {
+    id: "sifra-04",
+    title: "Spousta červených sleďů",
+    description: "",
+    files: [],
+    answerHash: "2355b71cf5683cb0c597810f042ded38d7ccfcea7a92ce9114ea22c37449682f"
+  },
+  {
+    id: "sifra-05",
+    title: "Má mě rád",
+    description: "",
+    files: [],
+    answerHash: "29ad793b844b6cd2382ff5472e5882541836f6622c0247f8558dcaa40d975e0e"
+  },
+  {
+    id: "sifra-06",
+    title: "Ale fuj, pořád ňáká matika",
+    description: "",
+    files: [],
+    answerHash: "6a80b23e74c1dd8342bce8129985ff422e11080a52479c7fddc3bbc6e5157159"
   }
 ];
 
+function stripDiacritics(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 async function checkAnswer(input, correctHash) {
-  const normalized = input.trim().toLowerCase();
+  const normalized = stripDiacritics(input.trim().toLowerCase());
   const encoder = new TextEncoder();
   const data = encoder.encode(normalized);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
