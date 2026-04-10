@@ -2,7 +2,7 @@
 // Replace the URL below with your Google Apps Script web app deployment URL.
 // See apps-script/Code.gs for the server-side code.
 
-const SHEETS_ENDPOINT = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID_HERE/exec";
+const SHEETS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxP7bkn4FlZXHuKLZH_zuJaNIBLIRAJZ-bQmjDEPog_qHwhF1fBg2noc5w45J8C78fl/exec";
 
 async function submitToSheets(username, puzzleId, answer, isCorrect) {
   const payload = {
