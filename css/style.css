@@ -195,6 +195,41 @@ input[type="text"]:disabled {
   font-size: 0.9rem;
 }
 
+/* ===== Intro Screen ===== */
+
+.intro-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+}
+
+.intro-content p {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.intro-content a {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.intro-content a:hover {
+  color: var(--color-accent-hover);
+}
+
+.intro-content .btn-primary {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 /* ===== Puzzle List ===== */
 
 #puzzle-list {

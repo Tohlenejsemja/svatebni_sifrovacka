@@ -1,11 +1,11 @@
 // ===== DOM References =====
 
 const loginScreen = document.getElementById("login-screen");
+const introScreen = document.getElementById("intro-screen");
 const dashboardScreen = document.getElementById("dashboard-screen");
 const loginForm = document.getElementById("login-form");
 const usernameInput = document.getElementById("username-input");
-const displayUsername = document.getElementById("display-username");
-const logoutBtn = document.getElementById("logout-btn");
+const introContinueBtn = document.getElementById("intro-continue-btn");
 const puzzleList = document.getElementById("puzzle-list");
 const toastEl = document.getElementById("toast");
 
@@ -29,17 +29,35 @@ function showToast(message, type = "info") {
 
 // ===== Screen Switching =====
 
-function showLogin() {
-  loginScreen.classList.remove("hidden");
+function hideAllScreens() {
+  loginScreen.classList.add("hidden");
+  introScreen.classList.add("hidden");
   dashboardScreen.classList.add("hidden");
+}
+
+function updateUserDisplays() {
+  const username = localStorage.getItem(LS_USERNAME);
+  document.querySelectorAll(".display-username").forEach(el => {
+    el.textContent = username;
+  });
+}
+
+function showLogin() {
+  hideAllScreens();
+  loginScreen.classList.remove("hidden");
   usernameInput.value = "";
   usernameInput.focus();
 }
 
+function showIntro() {
+  updateUserDisplays();
+  hideAllScreens();
+  introScreen.classList.remove("hidden");
+}
+
 function showDashboard() {
-  const username = localStorage.getItem(LS_USERNAME);
-  displayUsername.textContent = username;
-  loginScreen.classList.add("hidden");
+  updateUserDisplays();
+  hideAllScreens();
   dashboardScreen.classList.remove("hidden");
   renderPuzzles();
 }
@@ -51,12 +69,18 @@ loginForm.addEventListener("submit", (e) => {
   const name = usernameInput.value.trim();
   if (!name) return;
   localStorage.setItem(LS_USERNAME, name);
+  showIntro();
+});
+
+introContinueBtn.addEventListener("click", () => {
   showDashboard();
 });
 
-logoutBtn.addEventListener("click", () => {
-  localStorage.removeItem(LS_USERNAME);
-  showLogin();
+document.querySelectorAll(".logout-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    localStorage.removeItem(LS_USERNAME);
+    showLogin();
+  });
 });
 
 // ===== Puzzle Rendering =====
@@ -204,7 +228,7 @@ function renderPuzzles() {
 (function init() {
   const username = localStorage.getItem(LS_USERNAME);
   if (username) {
-    showDashboard();
+    showIntro();
   } else {
     showLogin();
   }
