@@ -335,6 +335,23 @@ input[type="text"]:disabled {
   margin-bottom: 1rem;
 }
 
+.puzzle-attempts {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.attempts-label {
+  font-weight: 600;
+  color: var(--color-error);
+}
+
+.puzzle-answer-correct {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
 .puzzle-form {
   display: flex;
   gap: 0.5rem;

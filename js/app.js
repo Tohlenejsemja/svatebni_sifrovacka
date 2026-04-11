@@ -85,32 +85,50 @@ document.querySelectorAll(".logout-btn").forEach(btn => {
 
 // ===== Puzzle Rendering =====
 
-function getSubmission(puzzleId) {
+function getSubmissions(puzzleId) {
   const raw = localStorage.getItem(LS_SUBMISSION_PREFIX + puzzleId);
-  if (!raw) return null;
+  if (!raw) return [];
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // Migrate old single-object format to array
+    if (!Array.isArray(parsed)) return [parsed];
+    return parsed;
   } catch {
-    return null;
+    return [];
   }
 }
 
 function saveSubmission(puzzleId, answer, correct) {
+  const submissions = getSubmissions(puzzleId);
+  submissions.push({ answer, correct });
   localStorage.setItem(
     LS_SUBMISSION_PREFIX + puzzleId,
-    JSON.stringify({ answer, correct })
+    JSON.stringify(submissions)
   );
+}
+
+function isSolved(submissions) {
+  return submissions.some(s => s.correct);
+}
+
+function getWrongAttempts(submissions) {
+  return submissions.filter(s => !s.correct);
 }
 
 function renderPuzzles() {
   puzzleList.innerHTML = "";
 
   PUZZLES.forEach((puzzle) => {
-    const submission = getSubmission(puzzle.id);
+    const submissions = getSubmissions(puzzle.id);
+    const solved = isSolved(submissions);
+    const wrong = getWrongAttempts(submissions);
+
     const card = document.createElement("article");
     card.className = "puzzle-card";
-    if (submission) {
-      card.classList.add(submission.correct ? "correct" : "wrong");
+    if (solved) {
+      card.classList.add("correct");
+    } else if (wrong.length > 0) {
+      card.classList.add("wrong");
     }
 
     // Header
@@ -122,10 +140,15 @@ function renderPuzzles() {
     title.textContent = puzzle.title;
     header.appendChild(title);
 
-    if (submission) {
+    if (solved) {
       const badge = document.createElement("span");
-      badge.className = `badge ${submission.correct ? "badge-correct" : "badge-wrong"}`;
-      badge.textContent = submission.correct ? "Správně" : "Špatně";
+      badge.className = "badge badge-correct";
+      badge.textContent = "Vyřešeno";
+      header.appendChild(badge);
+    } else if (wrong.length > 0) {
+      const badge = document.createElement("span");
+      badge.className = "badge badge-wrong";
+      badge.textContent = "Nevyřešeno";
       header.appendChild(badge);
     }
 
@@ -160,13 +183,30 @@ function renderPuzzles() {
       card.appendChild(hint);
     }
 
-    // Form (or submitted answer display)
-    if (submission && submission.correct) {
+    // Wrong attempts list
+    if (wrong.length > 0) {
+      const attemptsDiv = document.createElement("div");
+      attemptsDiv.className = "puzzle-attempts";
+      const attemptsLabel = document.createElement("span");
+      attemptsLabel.className = "attempts-label";
+      attemptsLabel.textContent = "Špatné pokusy: ";
+      attemptsDiv.appendChild(attemptsLabel);
+      const attemptsList = wrong.map(s => s.answer).join(", ");
+      attemptsDiv.appendChild(document.createTextNode(attemptsList));
+      card.appendChild(attemptsDiv);
+    }
+
+    // Correct answer display
+    if (solved) {
+      const correctAnswer = submissions.find(s => s.correct);
       const answerDisplay = document.createElement("p");
-      answerDisplay.className = "puzzle-answer-display";
-      answerDisplay.textContent = "Vaše odpověď: " + submission.answer;
+      answerDisplay.className = "puzzle-answer-display puzzle-answer-correct";
+      answerDisplay.textContent = "Správná odpověď: " + correctAnswer.answer;
       card.appendChild(answerDisplay);
-    } else {
+    }
+
+    // Form (only if not solved yet)
+    if (!solved) {
       const form = document.createElement("form");
       form.className = "puzzle-form";
 
